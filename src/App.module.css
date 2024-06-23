@@ -16,6 +16,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
+  gap: 1em;
   color: white;
 }
 
@@ -23,10 +24,31 @@
   color: #b318f0;
 }
 
+.container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  grid-column-gap: 0.5em;
+  grid-row-gap: 0.5em;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.container>* {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background: #696969;
+  padding: 0.50em;
+  border-radius: 10px;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
