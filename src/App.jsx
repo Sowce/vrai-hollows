@@ -98,6 +98,17 @@ function App() {
         for (let k = 0; k < 6; k++) {
           if (ignoreList.includes(matchingPatterns[i][j][k])) continue;
 
+          if (blockedTilesCount() < 5 && (matchingPatterns[i][j][k] === 1 || matchingPatterns[i][j][k] === 2)) continue;
+          if (matchingPatterns.length > 1 && matchingPatterns[i][j][k] === 3) continue;
+
+          if (grid()[j][k][0]() === matchingPatterns[i][j][k]) continue;
+
+          /*
+          Show locks when 16 patterns
+          swords & boxes when 5 locked
+
+          */
+
           if (!occurences.has(matchingPatterns[i][j][k])) occurences.set(matchingPatterns[i][j][k], new Map());
 
           const mapKey = JSON.stringify([j, k]);
@@ -127,6 +138,8 @@ function App() {
       foundTops = foundTops.concat(allTops);
     }
 
+    console.log(foundTops)
+
     updateHighlights(foundTops.map(top => {
       let parsedCoordinates = JSON.parse(top.value);
 
@@ -136,19 +149,6 @@ function App() {
         type: top.type
       };
     }))
-
-    // { x: 0, y: 0, type: 0 },
-    /*
-
-      occurences =>
-        fox =>
-          [0,1] => 6
-          [0,0] => 3
-          [0,2] => 5
-        swords =>
-
-        gift =>
-    */
 
   }
 
