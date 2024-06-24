@@ -98,7 +98,7 @@ function App() {
         for (let k = 0; k < 6; k++) {
           if (ignoreList.includes(matchingPatterns[i][j][k])) continue;
 
-          if (matchingPatterns > 16 && matchingPatterns[i][j][k] === 4) continue;
+          if (matchingPatterns.length > 16 && matchingPatterns[i][j][k] === 4) continue;
           if (blockedTilesCount() < 5 && (matchingPatterns[i][j][k] === 1 || matchingPatterns[i][j][k] === 2)) continue;
           if (matchingPatterns.length > 1 && matchingPatterns[i][j][k] === 3) continue;
 
