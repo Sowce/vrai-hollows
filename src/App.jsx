@@ -193,7 +193,7 @@ function App() {
       <header class={styles.header}>
         <div class={styles.text}>
 
-          <img draggable="false" height={60} src="/src/assets/lock.svg" alt="" />: {blockedTilesCount()} / 5
+          <img draggable="false" height={60} src="/icons/lock.svg" alt="" />: {blockedTilesCount()} / 5
         </div>
         <div class={styles.container} onContextMenu={(e) => e.preventDefault()}>
           <For each={grid()}>
@@ -212,7 +212,7 @@ function App() {
                   onContextMenu={(e) => e.preventDefault()}
                   onMouseDown={(e) => tileClicked(x(), y(), cell[0](), e)}
                 >
-                  <img draggable="false" src={`/src/assets/${renderCellType(cell[0]())}.svg`} alt="" />
+                  <img draggable="false" src={`/icons/${renderCellType(cell[0]())}.svg`} alt="" />
                 </div>}
               </For>
             }
