@@ -83,12 +83,9 @@ function App() {
         if (!occurences.has(matchPatterns[i][j])) occurences.set(matchPatterns[i][j], []);
 
         occurences.set(matchPatterns[i][j], [...occurences.get(matchPatterns[i][j]), [i, j]]);
-      }
-    }
 
-    {
-      ⚔️: [xy, xy, xy]
-      🎁: [xy, xy, xy, xy]
+        // Use new map to compare how many coordinates are duplicates
+      }
     }
 
     if (value === 4 || value === -1) {
