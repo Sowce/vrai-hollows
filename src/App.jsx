@@ -12,13 +12,13 @@ const baseGrid = [
   [-1, -1, -1, -1, -1, -1],
 ];
 
-/*  
-//  -1 = ?
-//  0  = Empty
-//  1  = Sword
-//  2  = Gift/Coffer
-//  3  = Fox
-//  4  = Blocked
+/*
+  -1 = ?
+  0  = Empty
+  1  = Sword
+  2  = Gift/Coffer
+  3  = Fox
+  4  = Blocked
 */
 
 const keybinds = [
@@ -61,6 +61,7 @@ function findMatchingPatterns(currentGrid) {
 function App() {
   const [grid, updateGrid] = createSignal(baseGrid);
   const [blockedTilesCount, setBlockedTilesCount] = createSignal(0);
+  const [highights, updateHighlights] = createSignal([]);
 
   // Initializing Grid
   updateGrid((currentGrid) => {
@@ -70,23 +71,36 @@ function App() {
   function updateCellContent(x, y, value) {
     grid()[x][y][1](value);
 
+    console.log('a')
     const matchingPatterns = findMatchingPatterns(grid().map(line => line.map(cell => cell[0]()))).map(pattern => pattern.map(line => line.map(cell => renderEmoji(cell))));
-
+    console.log('b')
     const occurences = new Map();
 
-    const ignoreList = [0, 3, 4];
+    const ignoreList = [-1, 0, 3, 4];
+
 
     for (let i = 0; i < matchingPatterns.length; i++) {
-      for (let j = 0; j < matchingPatterns.length; j++) {
-        if (ignoreList.includes(matchingPatterns[i][j])) continue;
+      for (let j = 0; j < matchingPatterns[i].length; j++) {
+        for (let k = 0; k < matchingPatterns[j].length; k++) {
+          try {
+            if (ignoreList.includes(matchingPatterns[i][j][k])) continue;
 
-        if (!occurences.has(matchingPatterns[i][j])) occurences.set(matchingPatterns[i][j], []);
+            if (!occurences.has(matchingPatterns[i][j][k])) occurences.set(matchingPatterns[i][j][k], []);
 
-        occurences.set(matchingPatterns[i][j], [...occurences.get(matchingPatterns[i][j]), [i, j]]);
+            occurences.set(matchingPatterns[i][j][k], [...occurences.get(matchingPatterns[i][j][k]), [j, k]]);
 
-        // Use new map to compare how many coordinates are duplicates
+            // Use new map to compare how many coordinates are duplicates
+          } catch (err) {
+            console.error(err);
+            debugger;
+          }
+        }
       }
     }
+
+    console.log(occurences)
+
+    console.log('c')
 
     if (value === 4 || value === -1) {
       let blockedCount = 0;
@@ -96,11 +110,15 @@ function App() {
         }
       }
 
+      console.log('d')
+
       setBlockedTilesCount(blockedCount);
     }
   }
 
   function tileClicked(x, y, value, event) {
+    //TODO: Fix weird interaction when  blockedTilesCount < 5, not letting you reset anything else and more
+
     if (event.button === 0 && blockedTilesCount() < 5 && value === -1) {
       updateCellContent(x, y, 4);
       return;

@@ -42,6 +42,13 @@
   background: #696969;
   padding: 0.50em;
   border-radius: 10px;
+  transition: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier();
+}
+
+.container>*:hover {
+  background: #575757;
 }
 
 @keyframes logo-spin {
