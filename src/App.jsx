@@ -76,13 +76,13 @@ function App() {
 
     const ignoreList = [0, 3, 4];
 
-    for (let i = 0; i < matchPatterns.length; i++) {
-      for (let j = 0; j < matchPatterns.length; j++) {
-        if (ignoreList.includes(matchPatterns[i][j])) continue;
+    for (let i = 0; i < matchingPatterns.length; i++) {
+      for (let j = 0; j < matchingPatterns.length; j++) {
+        if (ignoreList.includes(matchingPatterns[i][j])) continue;
 
-        if (!occurences.has(matchPatterns[i][j])) occurences.set(matchPatterns[i][j], []);
+        if (!occurences.has(matchingPatterns[i][j])) occurences.set(matchingPatterns[i][j], []);
 
-        occurences.set(matchPatterns[i][j], [...occurences.get(matchPatterns[i][j]), [i, j]]);
+        occurences.set(matchingPatterns[i][j], [...occurences.get(matchingPatterns[i][j]), [i, j]]);
 
         // Use new map to compare how many coordinates are duplicates
       }
