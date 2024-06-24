@@ -30,9 +30,9 @@ const keybinds = [
   { button: 2, ctrl: true, value: -1 },
 ]
 
-const emojis = ['🟫', '⬜', '⚔️', '🎁', '🦊', '🔒'];
+const emojis = ['unk', 'empty', 'swords', 'gift', 'fox', 'lock'];
 
-function renderEmoji(value) {
+function renderCellType(value) {
   return emojis[value + 1];
 }
 
@@ -61,46 +61,15 @@ function findMatchingPatterns(currentGrid) {
 function App() {
   const [grid, updateGrid] = createSignal(baseGrid);
   const [blockedTilesCount, setBlockedTilesCount] = createSignal(0);
-  const [highights, updateHighlights] = createSignal([]);
+  const [highlights, updateHighlights] = createSignal([]);
 
   // Initializing Grid
   updateGrid((currentGrid) => {
-    return currentGrid.map(line => line.map(cell => createSignal(-1)))
+    return currentGrid.map(line => line.map(_ => createSignal(-1)))
   });
 
   function updateCellContent(x, y, value) {
     grid()[x][y][1](value);
-
-    console.log('a')
-    const matchingPatterns = findMatchingPatterns(grid().map(line => line.map(cell => cell[0]()))).map(pattern => pattern.map(line => line.map(cell => renderEmoji(cell))));
-    console.log('b')
-    const occurences = new Map();
-
-    const ignoreList = [-1, 0, 3, 4];
-
-
-    for (let i = 0; i < matchingPatterns.length; i++) {
-      for (let j = 0; j < matchingPatterns[i].length; j++) {
-        for (let k = 0; k < matchingPatterns[j].length; k++) {
-          try {
-            if (ignoreList.includes(matchingPatterns[i][j][k])) continue;
-
-            if (!occurences.has(matchingPatterns[i][j][k])) occurences.set(matchingPatterns[i][j][k], []);
-
-            occurences.set(matchingPatterns[i][j][k], [...occurences.get(matchingPatterns[i][j][k]), [j, k]]);
-
-            // Use new map to compare how many coordinates are duplicates
-          } catch (err) {
-            console.error(err);
-            debugger;
-          }
-        }
-      }
-    }
-
-    console.log(occurences)
-
-    console.log('c')
 
     if (value === 4 || value === -1) {
       let blockedCount = 0;
@@ -110,14 +79,82 @@ function App() {
         }
       }
 
-      console.log('d')
 
       setBlockedTilesCount(blockedCount);
+      if (blockedCount == 0) {
+        updateHighlights([]);
+        return;
+      }
     }
+
+
+    const matchingPatterns = findMatchingPatterns(grid().map(line => line.map(cell => cell[0]())));
+    const occurences = new Map();
+
+    const ignoreList = [-1, 0];
+
+    for (let i = 0; i < matchingPatterns.length; i++) {
+      for (let j = 0; j < 6; j++) {
+        for (let k = 0; k < 6; k++) {
+          if (ignoreList.includes(matchingPatterns[i][j][k])) continue;
+
+          if (!occurences.has(matchingPatterns[i][j][k])) occurences.set(matchingPatterns[i][j][k], new Map());
+
+          const mapKey = JSON.stringify([j, k]);
+
+          if (!occurences.get(matchingPatterns[i][j][k]).has(mapKey)) {
+            occurences.get(matchingPatterns[i][j][k]).set(mapKey, 1);
+          } else {
+            occurences.get(matchingPatterns[i][j][k]).set(mapKey, occurences.get(matchingPatterns[i][j][k]).get(mapKey) + 1)
+          }
+        }
+      }
+    }
+
+    const occurenceEntires = [...occurences.entries()];
+
+    let foundTops = [];
+
+    for (let i = 0; i < occurenceEntires.length; i++) {
+      const sign = occurenceEntires[i][0];
+      const signOccurenceList = [...occurenceEntires[i][1]].sort((a, b) =>
+        b[1] - a[1]
+      );
+
+      let topValue = signOccurenceList[0][1];
+      let allTops = signOccurenceList.filter(value => value[1] === topValue).map(value => ({ type: sign, value: value[0] }));
+
+      foundTops = foundTops.concat(allTops);
+    }
+
+    updateHighlights(foundTops.map(top => {
+      let parsedCoordinates = JSON.parse(top.value);
+
+      return {
+        x: parsedCoordinates[0],
+        y: parsedCoordinates[1],
+        type: top.type
+      };
+    }))
+
+    // { x: 0, y: 0, type: 0 },
+    /*
+
+      occurences =>
+        fox =>
+          [0,1] => 6
+          [0,0] => 3
+          [0,2] => 5
+        swords =>
+
+        gift =>
+    */
+
   }
 
   function tileClicked(x, y, value, event) {
     //TODO: Fix weird interaction when  blockedTilesCount < 5, not letting you reset anything else and more
+    //TODO: check if grid == baseGrid and if so return
 
     if (event.button === 0 && blockedTilesCount() < 5 && value === -1) {
       updateCellContent(x, y, 4);
@@ -154,24 +191,35 @@ function App() {
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        Blocked tiles placed: {blockedTilesCount()}
+        <div class={styles.text}>
+
+          <img draggable="false" height={60} src="/src/assets/lock.svg" alt="" />: {blockedTilesCount()} / 5
+        </div>
         <div class={styles.container} onContextMenu={(e) => e.preventDefault()}>
           <For each={grid()}>
             {(gridLine, x) =>
               <For each={gridLine}>
                 {(cell, y) => <div
+                  class={
+                    (() => {
+                      const highlight = highlights().find(h => h.x == x() && h.y == y())
+
+                      if (!highlight) return [styles[renderCellType(cell[0]())]];
+
+                      return styles.highlight + ' ' + styles[renderCellType(highlight.type)];
+                    })()
+                  }
                   onContextMenu={(e) => e.preventDefault()}
                   onMouseDown={(e) => tileClicked(x(), y(), cell[0](), e)}
                 >
-                  {renderEmoji(cell[0]())}
+                  <img draggable="false" src={`/src/assets/${renderCellType(cell[0]())}.svg`} alt="" />
                 </div>}
               </For>
-
             }
           </For>
         </div>
-      </header>
-    </div>
+      </header >
+    </div >
   );
 }
 
