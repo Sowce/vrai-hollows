@@ -39,7 +39,8 @@ function renderCellType(value) {
 function matchPatterns(currentGrid, foxGrid) {
   for (let x = 0; x < 6; x++) {
     for (let y = 0; y < 6; y++) {
-      if (currentGrid[x][y] === -1) continue;
+      if (currentGrid[x][y] === 0 && foxGrid[x][y] === 3) continue;
+      if (currentGrid[x][y] === (-1)) continue;
 
       if (currentGrid[x][y] !== foxGrid[x][y]) return false;
     }
@@ -87,7 +88,6 @@ function App() {
       }
     }
 
-
     const matchingPatterns = findMatchingPatterns(grid().map(line => line.map(cell => cell[0]())));
     const occurences = new Map();
 
@@ -101,7 +101,6 @@ function App() {
           if (matchingPatterns.length > 16 && matchingPatterns[i][j][k] === 4) continue;
           if (blockedTilesCount() < 5 && (matchingPatterns[i][j][k] === 1 || matchingPatterns[i][j][k] === 2)) continue;
           if (matchingPatterns.length > 1 && matchingPatterns[i][j][k] === 3) continue;
-
           if (grid()[j][k][0]() === matchingPatterns[i][j][k]) continue;
 
           /*
@@ -139,14 +138,17 @@ function App() {
       foundTops = foundTops.concat(allTops);
     }
 
-    console.log(foundTops)
 
-    updateHighlights(foundTops.map(top => {
-      let parsedCoordinates = JSON.parse(top.value);
+
+    updateHighlights(foundTops.filter(top => {
+      let [x, y] = JSON.parse(top.value);
+      return grid()[x][y][0]() === -1;
+    }).map(top => {
+      let [x, y] = JSON.parse(top.value);
 
       return {
-        x: parsedCoordinates[0],
-        y: parsedCoordinates[1],
+        x,
+        y,
         type: top.type
       };
     }))
@@ -154,9 +156,6 @@ function App() {
   }
 
   function tileClicked(x, y, value, event) {
-    //TODO: Fix weird interaction when  blockedTilesCount < 5, not letting you reset anything else and more
-    //TODO: check if grid == baseGrid and if so return
-
     if (event.button === 0 && blockedTilesCount() < 5 && value === -1) {
       updateCellContent(x, y, 4);
       return;
