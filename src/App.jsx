@@ -63,6 +63,7 @@ function App() {
   const [grid, updateGrid] = createSignal(baseGrid);
   const [blockedTilesCount, setBlockedTilesCount] = createSignal(0);
   const [highlights, updateHighlights] = createSignal([]);
+  const [foxCount, updateFoxCount] = createSignal(0);
 
   // Initializing Grid
   updateGrid((currentGrid) => {
@@ -70,6 +71,9 @@ function App() {
   });
 
   function updateCellContent(x, y, value) {
+    if (value !== 3 && grid()[x][y][0]() === 3) updateFoxCount(foxCount() - 1);
+    if (value === 3) updateFoxCount(foxCount() + 1);
+
     grid()[x][y][1](value);
 
     if (value === 4 || value === -1) {
@@ -142,6 +146,9 @@ function App() {
 
     updateHighlights(foundTops.filter(top => {
       let [x, y] = JSON.parse(top.value);
+
+      if (top.type === 3 && foxCount() > 0) return false;
+
       return grid()[x][y][0]() === -1;
     }).map(top => {
       let [x, y] = JSON.parse(top.value);
