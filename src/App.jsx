@@ -70,6 +70,14 @@ function App() {
     return currentGrid.map(line => line.map(_ => createSignal(-1)))
   });
 
+  function onResetBtn() {
+    updateGrid((currentGrid) => {
+      return currentGrid.map(line => line.map(_ => createSignal(-1)))
+    });
+
+    updateCellContent(0, 0, -1);
+  }
+
   function updateCellContent(x, y, value) {
     if (value !== 3 && grid()[x][y][0]() === 3) updateFoxCount(foxCount() - 1);
     if (value === 3) updateFoxCount(foxCount() + 1);
@@ -197,7 +205,6 @@ function App() {
     <div class={styles.App}>
       <header class={styles.header}>
         <div class={styles.text}>
-
           <img draggable="false" height={60} src="/icons/lock.svg" alt="" />: {blockedTilesCount()} / 5
         </div>
         <div class={styles.container} onContextMenu={(e) => e.preventDefault()}>
@@ -224,6 +231,11 @@ function App() {
               </For>
             }
           </For>
+        </div>
+        <div class={styles.btnCtn}>
+          <button onclick={onResetBtn}>
+            <img src="/icons/reset.svg" alt="" />
+          </button>
         </div>
       </header >
     </div >

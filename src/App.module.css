@@ -22,7 +22,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  gap: 1em;
+  gap: 0.4em;
   color: white;
 }
 
@@ -118,6 +118,31 @@
   background: #455834;
   outline-color: #29BC3D;
 }
+
+.btnCtn {
+  width: calc(0.4em * 5 + 12em * 1.25);
+  display: flex;
+  justify-content: end;
+}
+
+button {
+  img {
+    height: 1em;
+  }
+
+  width: 1.75em;
+  height: 1.75em;
+  border: none;
+  background: #972020;
+  outline-color: #583434;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em;
+  border-radius: 10px;
+  font-size: 1em;
+}
+
 
 @keyframes logo-spin {
   from {
