@@ -30,7 +30,7 @@ const keybinds = [
   { button: 2, ctrl: true, value: -1 },
 ]
 
-const emojis = ['unk', 'empty', 'swords', 'gift', 'fox', 'lock'];
+const emojis = ['unk', 'empty', 'swords', 'gift', 'fox', 'lock', 'overlap'];
 
 function renderCellType(value) {
   return emojis[value + 1];
@@ -142,8 +142,6 @@ function App() {
       foundTops = foundTops.concat(allTops);
     }
 
-
-
     updateHighlights(foundTops.filter(top => {
       let [x, y] = JSON.parse(top.value);
 
@@ -209,11 +207,13 @@ function App() {
                 {(cell, y) => <div
                   class={
                     (() => {
-                      const highlight = highlights().find(h => h.x == x() && h.y == y())
+                      const matchingHighlights = highlights().filter(h => h.x == x() && h.y == y())
 
-                      if (!highlight) return [styles[renderCellType(cell[0]())]];
+                      if (matchingHighlights.length == 0) return [styles[renderCellType(cell[0]())]];
 
-                      return styles.highlight + ' ' + styles[renderCellType(highlight.type)];
+                      if (matchingHighlights.length > 1) return styles.highlight + ' ' + styles.overlap;
+
+                      return styles.highlight + ' ' + styles[renderCellType(matchingHighlights[0].type)];
                     })()
                   }
                   onContextMenu={(e) => e.preventDefault()}
