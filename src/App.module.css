@@ -40,7 +40,7 @@
   user-select: none;
 }
 
-.container>* {
+.container > * {
   font-size: 1.25em;
   line-height: 1.25em;
   display: flex;
@@ -59,12 +59,12 @@
   transition-timing-function: cubic-bezier();
 }
 
-.container>*>img {
+.container > * > img {
   width: 80%;
   height: 80%;
 }
 
-.container>*:hover {
+.container > *:hover {
   filter: brightness(75%);
 }
 
@@ -74,7 +74,7 @@
 }
 
 .fox.highlight {
-  background: #7B4939;
+  background: #7b4939;
 }
 
 .fox {
@@ -83,7 +83,7 @@
 }
 
 .swords.highlight {
-  background: #434D65;
+  background: #434d65;
 }
 
 .swords {
@@ -92,7 +92,7 @@
 }
 
 .highlight.gift {
-  background: #7B5F25;
+  background: #7b5f25;
 }
 
 .gift {
@@ -101,7 +101,7 @@
 }
 
 .highlight.lock {
-  background: #5A463B;
+  background: #5a463b;
 }
 
 .lock {
@@ -116,7 +116,7 @@
 
 .highlight.overlap {
   background: #455834;
-  outline-color: #29BC3D;
+  outline-color: #29bc3d;
 }
 
 .btnCtn {
@@ -142,7 +142,6 @@ button {
   border-radius: 10px;
   font-size: 1em;
 }
-
 
 @keyframes logo-spin {
   from {

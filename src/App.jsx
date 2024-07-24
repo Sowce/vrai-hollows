@@ -1,5 +1,5 @@
-import styles from './App.module.css';
-import { createSignal } from 'solid-js';
+import styles from "./App.module.css";
+import { createSignal } from "solid-js";
 
 import foxData from "./newdata.json";
 
@@ -28,9 +28,9 @@ const keybinds = [
   { button: 2, shift: true, value: 3 },
   { button: 0, ctrl: true, value: -1 },
   { button: 2, ctrl: true, value: -1 },
-]
+];
 
-const emojis = ['unk', 'empty', 'swords', 'gift', 'fox', 'lock', 'overlap'];
+const emojis = ["unk", "empty", "swords", "gift", "fox", "lock", "overlap"];
 
 function renderCellType(value) {
   return emojis[value + 1];
@@ -40,7 +40,7 @@ function matchPatterns(currentGrid, foxGrid) {
   for (let x = 0; x < 6; x++) {
     for (let y = 0; y < 6; y++) {
       if (currentGrid[x][y] === 0 && foxGrid[x][y] === 3) continue;
-      if (currentGrid[x][y] === (-1)) continue;
+      if (currentGrid[x][y] === -1) continue;
 
       if (currentGrid[x][y] !== foxGrid[x][y]) return false;
     }
@@ -53,7 +53,7 @@ function findMatchingPatterns(currentGrid) {
   let results = [];
 
   for (let i = 0; i < foxData.length; i++) {
-    if (matchPatterns(currentGrid, foxData[i])) results.push(foxData[i])
+    if (matchPatterns(currentGrid, foxData[i])) results.push(foxData[i]);
   }
 
   return results;
@@ -67,19 +67,23 @@ function App() {
 
   // Initializing Grid
   updateGrid((currentGrid) => {
-    return currentGrid.map(line => line.map(_ => createSignal(-1)))
+    return currentGrid.map((line) => line.map((_) => createSignal(-1)));
   });
 
   function onResetBtn() {
     updateGrid((currentGrid) => {
-      return currentGrid.map(line => line.map(_ => createSignal(-1)))
+      return currentGrid.map((line) => line.map((_) => createSignal(-1)));
     });
 
     updateCellContent(0, 0, -1);
   }
 
+  function readGridCell(x, y) {
+    return grid()[x][y][0]();
+  }
+
   function updateCellContent(x, y, value) {
-    if (value !== 3 && grid()[x][y][0]() === 3) updateFoxCount(foxCount() - 1);
+    if (value !== 3 && readGridCell(x, y) === 3) updateFoxCount(foxCount() - 1);
     if (value === 3) updateFoxCount(foxCount() + 1);
 
     grid()[x][y][1](value);
@@ -88,10 +92,9 @@ function App() {
       let blockedCount = 0;
       for (let i = 0; i < 6; i++) {
         for (let j = 0; j < 6; j++) {
-          if (grid()[i][j][0]() === 4) blockedCount++;
+          if (readGridCell(i, j) === 4) blockedCount++;
         }
       }
-
 
       setBlockedTilesCount(blockedCount);
       if (blockedCount == 0) {
@@ -100,7 +103,9 @@ function App() {
       }
     }
 
-    const matchingPatterns = findMatchingPatterns(grid().map(line => line.map(cell => cell[0]())));
+    const matchingPatterns = findMatchingPatterns(
+      grid().map((line) => line.map((cell) => cell[0]()))
+    );
     const occurences = new Map();
 
     const ignoreList = [-1, 0];
@@ -110,25 +115,36 @@ function App() {
         for (let k = 0; k < 6; k++) {
           if (ignoreList.includes(matchingPatterns[i][j][k])) continue;
 
-          if (matchingPatterns.length > 16 && matchingPatterns[i][j][k] === 4) continue;
-          if (blockedTilesCount() < 5 && (matchingPatterns[i][j][k] === 1 || matchingPatterns[i][j][k] === 2)) continue;
-          if (matchingPatterns.length > 1 && matchingPatterns[i][j][k] === 3) continue;
-          if (grid()[j][k][0]() === matchingPatterns[i][j][k]) continue;
+          if (matchingPatterns.length > 16 && matchingPatterns[i][j][k] === 4)
+            continue;
+          if (
+            blockedTilesCount() < 5 &&
+            (matchingPatterns[i][j][k] === 1 || matchingPatterns[i][j][k] === 2)
+          )
+            continue;
+          if (matchingPatterns.length > 1 && matchingPatterns[i][j][k] === 3)
+            continue;
+          if (readGridCell(j, k) === matchingPatterns[i][j][k]) continue;
 
           /*
           Show locks when 16 patterns
           swords & boxes when 5 locked
-
           */
 
-          if (!occurences.has(matchingPatterns[i][j][k])) occurences.set(matchingPatterns[i][j][k], new Map());
+          if (!occurences.has(matchingPatterns[i][j][k]))
+            occurences.set(matchingPatterns[i][j][k], new Map());
 
           const mapKey = JSON.stringify([j, k]);
 
           if (!occurences.get(matchingPatterns[i][j][k]).has(mapKey)) {
             occurences.get(matchingPatterns[i][j][k]).set(mapKey, 1);
           } else {
-            occurences.get(matchingPatterns[i][j][k]).set(mapKey, occurences.get(matchingPatterns[i][j][k]).get(mapKey) + 1)
+            occurences
+              .get(matchingPatterns[i][j][k])
+              .set(
+                mapKey,
+                occurences.get(matchingPatterns[i][j][k]).get(mapKey) + 1
+              );
           }
         }
       }
@@ -140,32 +156,37 @@ function App() {
 
     for (let i = 0; i < occurenceEntires.length; i++) {
       const sign = occurenceEntires[i][0];
-      const signOccurenceList = [...occurenceEntires[i][1]].sort((a, b) =>
-        b[1] - a[1]
+      const signOccurenceList = [...occurenceEntires[i][1]].sort(
+        (a, b) => b[1] - a[1]
       );
 
       let topValue = signOccurenceList[0][1];
-      let allTops = signOccurenceList.filter(value => value[1] === topValue).map(value => ({ type: sign, value: value[0] }));
+      let allTops = signOccurenceList
+        .filter((value) => value[1] === topValue)
+        .map((value) => ({ type: sign, value: value[0] }));
 
       foundTops = foundTops.concat(allTops);
     }
 
-    updateHighlights(foundTops.filter(top => {
-      let [x, y] = JSON.parse(top.value);
+    updateHighlights(
+      foundTops
+        .filter((top) => {
+          let [x, y] = JSON.parse(top.value);
 
-      if (top.type === 3 && foxCount() > 0) return false;
+          if (top.type === 3 && foxCount() > 0) return false;
 
-      return grid()[x][y][0]() === -1;
-    }).map(top => {
-      let [x, y] = JSON.parse(top.value);
+          return readGridCell(x, y) === -1;
+        })
+        .map((top) => {
+          let [x, y] = JSON.parse(top.value);
 
-      return {
-        x,
-        y,
-        type: top.type
-      };
-    }))
-
+          return {
+            x,
+            y,
+            type: top.type,
+          };
+        })
+    );
   }
 
   function tileClicked(x, y, value, event) {
@@ -181,14 +202,13 @@ function App() {
 
     if (blockedTilesCount() < 5) return;
 
-
-    let found = keybinds.find(keybind => {
+    let found = keybinds.find((keybind) => {
       if (keybind.button !== event.button) return false;
-      if (event.shiftKey && !('shift' in keybind)) return false;
-      if (event.ctrlKey && !('ctrl' in keybind)) return false;
+      if (event.shiftKey && !("shift" in keybind)) return false;
+      if (event.ctrlKey && !("ctrl" in keybind)) return false;
 
       return true;
-    })
+    });
 
     if (found) {
       if (found.value === value) {
@@ -205,31 +225,43 @@ function App() {
     <div class={styles.App}>
       <header class={styles.header}>
         <div class={styles.text}>
-          <img draggable="false" height={60} src="/icons/lock.svg" alt="" />: {blockedTilesCount()} / 5
+          <img draggable="false" height={60} src="/icons/lock.svg" alt="" />:{" "}
+          {blockedTilesCount()} / 5
         </div>
         <div class={styles.container} onContextMenu={(e) => e.preventDefault()}>
           <For each={grid()}>
-            {(gridLine, x) =>
+            {(gridLine, x) => (
               <For each={gridLine}>
-                {(cell, y) => <div
-                  class={
-                    (() => {
-                      const matchingHighlights = highlights().filter(h => h.x == x() && h.y == y())
+                {(cell, y) => (
+                  <div
+                    class={(() => {
+                      const matchingHighlights = highlights().filter(
+                        (h) => h.x == x() && h.y == y()
+                      );
 
-                      if (matchingHighlights.length == 0) return [styles[renderCellType(cell[0]())]];
+                      if (matchingHighlights.length == 0)
+                        return [styles[renderCellType(cell[0]())]];
+                      if (matchingHighlights.length > 1)
+                        return styles.highlight + " " + styles.overlap;
 
-                      if (matchingHighlights.length > 1) return styles.highlight + ' ' + styles.overlap;
-
-                      return styles.highlight + ' ' + styles[renderCellType(matchingHighlights[0].type)];
-                    })()
-                  }
-                  onContextMenu={(e) => e.preventDefault()}
-                  onMouseDown={(e) => tileClicked(x(), y(), cell[0](), e)}
-                >
-                  <img draggable="false" src={`/icons/${renderCellType(cell[0]())}.svg`} alt="" />
-                </div>}
+                      return (
+                        styles.highlight +
+                        " " +
+                        styles[renderCellType(matchingHighlights[0].type)]
+                      );
+                    })()}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onMouseDown={(e) => tileClicked(x(), y(), cell[0](), e)}
+                  >
+                    <img
+                      draggable="false"
+                      src={`/icons/${renderCellType(cell[0]())}.svg`}
+                      alt=""
+                    />
+                  </div>
+                )}
               </For>
-            }
+            )}
           </For>
         </div>
         <div class={styles.btnCtn}>
@@ -237,8 +269,8 @@ function App() {
             <img src="/icons/reset.svg" alt="" />
           </button>
         </div>
-      </header >
-    </div >
+      </header>
+    </div>
   );
 }
 
