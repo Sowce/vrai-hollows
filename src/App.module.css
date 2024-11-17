@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.toptext {
+.topText {
   gap: 0.5rem;
   display: flex;
   justify-content: center;
@@ -121,7 +121,8 @@
 .text .gift,
 .text .fox,
 .text .empty,
-.text .lock {
+.text .lock,
+.topText .lock {
   font-size: 1em;
   line-height: 1em;
   display: flex;

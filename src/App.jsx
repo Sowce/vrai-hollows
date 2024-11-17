@@ -229,8 +229,15 @@ function App() {
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        <div class={styles.toptext} style="gap: 1px;">
-          <img draggable="false" height={60} src="/icons/lock.svg" alt="" />
+        <div class={styles.topText} style="gap: 1px;">
+          <div class={styles.lock}>
+            <img
+              draggable="false"
+              style="width: 80%;height: 80%;"
+              src="/icons/lock.svg"
+              alt=""
+            />
+          </div>
           {blockedTilesCount()} / 5
         </div>
         <div style="position: relative;">
