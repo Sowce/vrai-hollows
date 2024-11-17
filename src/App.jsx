@@ -229,138 +229,149 @@ function App() {
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        <div class={styles["state-text"]}>
-          <div class={styles.text}>
-            <Show when={blockedTilesCount() < 5}>
-              <img
-                draggable="false"
-                class={styles.mouse}
-                src="/icons/lmb.svg"
-                alt=""
-              />
-              <span>🟰</span>
-              <div class={styles.lock}>
-                <img
-                  draggable="false"
-                  src={`/icons/lock.svg`}
-                  style="width: 80%;height: 80%;"
-                  alt=""
-                />
-              </div>
-            </Show>
-            <Show when={blockedTilesCount() === 5}>
-              <img
-                draggable="false"
-                class={styles.mouse}
-                // height={60}
-                src="/icons/lmb.svg"
-                alt=""
-              />
-              <span>🟰</span>
-              <div class={styles.swords}>
-                <img
-                  draggable="false"
-                  src={`/icons/swords.svg`}
-                  style="width: 80%;height: 80%;"
-                  alt=""
-                />
-              </div>
-              <div class={styles.separator}></div>
-              <img
-                draggable="false"
-                class={styles.mouse}
-                src="/icons/rmb.svg"
-                alt=""
-              />
-              <span>🟰</span>
-              <div class={styles.empty}>
-                <img
-                  draggable="false"
-                  src={`/icons/empty.svg`}
-                  style="width: 80%;height: 80%;"
-                  alt=""
-                />
-              </div>
-              <div class={styles.separator}></div>
-              <div class={styles.button}>Shift</div>
-              <span>➕</span>
-              <img
-                draggable="false"
-                class={styles.mouse}
-                height={60}
-                src="/icons/lmb.svg"
-                alt=""
-              />
-              <span>🟰</span>
-              <div class={styles.gift}>
-                <img
-                  draggable="false"
-                  src={`/icons/gift.svg`}
-                  style="width: 80%;height: 80%;"
-                  alt=""
-                />
-              </div>
-              <div class={styles.separator}></div>
-              <div class={styles.button}>Shift</div>
-              <span>➕</span>
-              <img
-                draggable="false"
-                class={styles.mouse}
-                height={60}
-                src="/icons/rmb.svg"
-                alt=""
-              />
-              <span>🟰</span>
-              <div class={styles.fox}>
-                <img
-                  draggable="false"
-                  src={`/icons/fox.svg`}
-                  style="width: 80%;height: 80%;"
-                  alt=""
-                />
-              </div>
-            </Show>
-          </div>
-          <div class={styles.text}>
-            <img draggable="false" height={60} src="/icons/lock.svg" alt="" />:{" "}
-            {blockedTilesCount()} / 5
-          </div>
+        <div class={styles.toptext} style="gap: 1px;">
+          <img draggable="false" height={60} src="/icons/lock.svg" alt="" />
+          {blockedTilesCount()} / 5
         </div>
-        <div class={styles.container} onContextMenu={(e) => e.preventDefault()}>
-          <For each={grid()}>
-            {(gridLine, x) => (
-              <For each={gridLine}>
-                {(cell, y) => (
-                  <div
-                    class={(() => {
-                      const matchingHighlights = highlights().filter(
-                        (h) => h.x == x() && h.y == y()
-                      );
+        <div style="position: relative;">
+          <div
+            class={styles.container}
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            <For each={grid()}>
+              {(gridLine, x) => (
+                <For each={gridLine}>
+                  {(cell, y) => (
+                    <div
+                      class={(() => {
+                        const matchingHighlights = highlights().filter(
+                          (h) => h.x == x() && h.y == y()
+                        );
 
-                      if (matchingHighlights.length == 0)
-                        return [styles[renderCellType(cell[0]())]];
-                      if (matchingHighlights.length > 1)
-                        return styles.highlight + " " + styles.overlap;
+                        if (matchingHighlights.length == 0)
+                          return [styles[renderCellType(cell[0]())]];
+                        if (matchingHighlights.length > 1)
+                          return styles.highlight + " " + styles.overlap;
 
-                      return (
-                        styles.highlight +
-                        " " +
-                        styles[renderCellType(matchingHighlights[0].type)]
-                      );
-                    })()}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onMouseDown={(e) => tileClicked(x(), y(), cell[0](), e)}
-                  >
+                        return (
+                          styles.highlight +
+                          " " +
+                          styles[renderCellType(matchingHighlights[0].type)]
+                        );
+                      })()}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onMouseDown={(e) => tileClicked(x(), y(), cell[0](), e)}
+                    >
+                      <img
+                        draggable="false"
+                        src={`/icons/${renderCellType(cell[0]())}.svg`}
+                        alt=""
+                      />
+                    </div>
+                  )}
+                </For>
+              )}
+            </For>
+          </div>
+          <div class={styles.flyingCtn}>
+            <div class={styles.text}>
+              <Show when={blockedTilesCount() < 5}>
+                <div class={styles.line}>
+                  <img
+                    draggable="false"
+                    class={styles.mouse}
+                    src="/icons/lmb.svg"
+                    alt=""
+                  />
+                  <span>🟰</span>
+                  <div class={styles.lock}>
                     <img
                       draggable="false"
-                      src={`/icons/${renderCellType(cell[0]())}.svg`}
+                      src={`/icons/lock.svg`}
+                      style="width: 80%;height: 80%;"
                       alt=""
                     />
                   </div>
-                )}
-              </For>
-            )}
-          </For>
+                </div>
+              </Show>
+              <Show when={blockedTilesCount() === 5}>
+                <div class={styles.line}>
+                  <img
+                    draggable="false"
+                    class={styles.mouse}
+                    src="/icons/lmb.svg"
+                    alt=""
+                  />
+                  <span>🟰</span>
+                  <div class={styles.swords}>
+                    <img
+                      draggable="false"
+                      src={`/icons/swords.svg`}
+                      style="width: 80%;height: 80%;"
+                      alt=""
+                    />
+                  </div>
+                </div>
+                <div class={styles.line}>
+                  <img
+                    draggable="false"
+                    class={styles.mouse}
+                    src="/icons/rmb.svg"
+                    alt=""
+                  />
+                  <span>🟰</span>
+                  <div class={styles.empty}>
+                    <img
+                      draggable="false"
+                      src={`/icons/empty.svg`}
+                      style="width: 80%;height: 80%;"
+                      alt=""
+                    />
+                  </div>
+                </div>
+                <div class={styles.line}>
+                  <div class={styles.button}>Shift</div>
+                  <span>➕</span>
+                  <img
+                    draggable="false"
+                    class={styles.mouse}
+                    height={60}
+                    src="/icons/lmb.svg"
+                    alt=""
+                  />
+                  <span>🟰</span>
+                  <div class={styles.gift}>
+                    <img
+                      draggable="false"
+                      src={`/icons/gift.svg`}
+                      style="width: 80%;height: 80%;"
+                      alt=""
+                    />
+                  </div>
+                </div>
+                <div class={styles.line}>
+                  <div class={styles.button}>Shift</div>
+                  <span>➕</span>
+                  <img
+                    draggable="false"
+                    class={styles.mouse}
+                    height={60}
+                    src="/icons/rmb.svg"
+                    alt=""
+                  />
+                  <span>🟰</span>
+                  <div class={styles.fox}>
+                    <img
+                      draggable="false"
+                      src={`/icons/fox.svg`}
+                      style="width: 80%;height: 80%;"
+                      alt=""
+                    />
+                  </div>
+                </div>
+              </Show>
+            </div>
+          </div>
         </div>
         <div class={styles.btnCtn}>
           <button onclick={onResetBtn}>
