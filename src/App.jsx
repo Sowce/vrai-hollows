@@ -190,7 +190,8 @@ function App() {
   }
 
   function tileClicked(x, y, value, event) {
-    if (event.button === 0 && blockedTilesCount() < 5 && value === -1) {
+    const blockedTiles = blockedTilesCount();
+    if (event.button === 0 && blockedTiles < 5 && value === -1) {
       updateCellContent(x, y, 4);
       return;
     }
@@ -200,7 +201,11 @@ function App() {
       return;
     }
 
-    if (blockedTilesCount() < 5) return;
+    if (blockedTiles < 5) {
+      if (event.button === 2) updateCellContent(x, y, -1);
+
+      return;
+    }
 
     let found = keybinds.find((keybind) => {
       if (keybind.button !== event.button) return false;
@@ -224,9 +229,102 @@ function App() {
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        <div class={styles.text}>
-          <img draggable="false" height={60} src="/icons/lock.svg" alt="" />:{" "}
-          {blockedTilesCount()} / 5
+        <div class={styles["state-text"]}>
+          <div class={styles.text}>
+            <Show when={blockedTilesCount() < 5}>
+              <img
+                draggable="false"
+                class={styles.mouse}
+                src="/icons/lmb.svg"
+                alt=""
+              />
+              <span>🟰</span>
+              <div class={styles.lock}>
+                <img
+                  draggable="false"
+                  src={`/icons/lock.svg`}
+                  style="width: 80%;height: 80%;"
+                  alt=""
+                />
+              </div>
+            </Show>
+            <Show when={blockedTilesCount() === 5}>
+              <img
+                draggable="false"
+                class={styles.mouse}
+                // height={60}
+                src="/icons/lmb.svg"
+                alt=""
+              />
+              <span>🟰</span>
+              <div class={styles.swords}>
+                <img
+                  draggable="false"
+                  src={`/icons/swords.svg`}
+                  style="width: 80%;height: 80%;"
+                  alt=""
+                />
+              </div>
+              <div class={styles.separator}></div>
+              <img
+                draggable="false"
+                class={styles.mouse}
+                src="/icons/rmb.svg"
+                alt=""
+              />
+              <span>🟰</span>
+              <div class={styles.empty}>
+                <img
+                  draggable="false"
+                  src={`/icons/empty.svg`}
+                  style="width: 80%;height: 80%;"
+                  alt=""
+                />
+              </div>
+              <div class={styles.separator}></div>
+              <div class={styles.button}>Shift</div>
+              <span>➕</span>
+              <img
+                draggable="false"
+                class={styles.mouse}
+                height={60}
+                src="/icons/lmb.svg"
+                alt=""
+              />
+              <span>🟰</span>
+              <div class={styles.gift}>
+                <img
+                  draggable="false"
+                  src={`/icons/gift.svg`}
+                  style="width: 80%;height: 80%;"
+                  alt=""
+                />
+              </div>
+              <div class={styles.separator}></div>
+              <div class={styles.button}>Shift</div>
+              <span>➕</span>
+              <img
+                draggable="false"
+                class={styles.mouse}
+                height={60}
+                src="/icons/rmb.svg"
+                alt=""
+              />
+              <span>🟰</span>
+              <div class={styles.fox}>
+                <img
+                  draggable="false"
+                  src={`/icons/fox.svg`}
+                  style="width: 80%;height: 80%;"
+                  alt=""
+                />
+              </div>
+            </Show>
+          </div>
+          <div class={styles.text}>
+            <img draggable="false" height={60} src="/icons/lock.svg" alt="" />:{" "}
+            {blockedTilesCount()} / 5
+          </div>
         </div>
         <div class={styles.container} onContextMenu={(e) => e.preventDefault()}>
           <For each={grid()}>
