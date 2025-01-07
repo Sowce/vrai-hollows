@@ -224,4 +224,11 @@ button {
   padding: 0.5em;
   border-radius: 10px;
   font-size: 1em;
+  transition: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier();
+}
+
+button:hover {
+  filter: brightness(75%);
 }
