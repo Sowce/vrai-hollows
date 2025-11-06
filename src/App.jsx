@@ -88,8 +88,8 @@ function App() {
 
     grid()[x][y][1](value);
 
+    let blockedCount = 0;
     if (value === 4 || value === -1) {
-      let blockedCount = 0;
       for (let i = 0; i < 6; i++) {
         for (let j = 0; j < 6; j++) {
           if (readGridCell(i, j) === 4) blockedCount++;
@@ -107,8 +107,39 @@ function App() {
       grid().map((line) => line.map((cell) => cell[0]()))
     );
     const occurences = new Map();
-
     const ignoreList = [-1, 0];
+
+    if (value === 4 && blockedCount === 2 && matchingPatterns.length > 0) {
+      let allSameBlocks = true;
+      // check all patterns have the same blocks
+      if (matchingPatterns.length > 1) {
+        for (let i = 0; i < matchingPatterns.length; i++) {
+          let otherPattern = i < matchingPatterns.length - 1 ? i + 1 : 0;
+          for (let j = 0; j < 6; j++) {
+            for (let k = 0; k < 6; k++) {
+              if (
+                matchingPatterns[i][j][k] === 4 &&
+                matchingPatterns[i][j][k] !==
+                  matchingPatterns[otherPattern][j][k]
+              ) {
+                allSameBlocks = false;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      if (allSameBlocks) {
+        for (let i = 0; i < 6; i++) {
+          for (let j = 0; j < 6; j++) {
+            if (matchingPatterns[0][i][j] === 4 && readGridCell(i, j) !== 4)
+              updateCellContent(i, j, 4);
+          }
+        }
+        return;
+      }
+    }
 
     for (let i = 0; i < matchingPatterns.length; i++) {
       for (let j = 0; j < 6; j++) {
@@ -160,12 +191,11 @@ function App() {
         (a, b) => b[1] - a[1]
       );
 
-      let topValue = signOccurenceList[0][1];
-      let allTops = signOccurenceList
-        .filter((value) => value[1] === topValue)
-        .map((value) => ({ type: sign, value: value[0] }));
-
-      foundTops = foundTops.concat(allTops);
+      foundTops = foundTops.concat(
+        signOccurenceList
+          .filter((value) => value[1] === signOccurenceList[0][1])
+          .map((value) => ({ type: sign, value: value[0] }))
+      );
     }
 
     updateHighlights(
