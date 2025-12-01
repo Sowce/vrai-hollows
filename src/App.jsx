@@ -104,12 +104,12 @@ function App() {
     }
 
     const matchingPatterns = findMatchingPatterns(
-      grid().map((line) => line.map((cell) => cell[0]()))
+      grid().map((line) => line.map((cell) => cell[0]())),
     );
     const occurences = new Map();
     const ignoreList = [-1, 0];
 
-    if (value === 4 && blockedCount === 2 && matchingPatterns.length > 0) {
+    if (value === 4 && blockedCount >= 2 && matchingPatterns.length > 0) {
       let allSameBlocks = true;
       // check all patterns have the same blocks
       if (matchingPatterns.length > 1) {
@@ -174,7 +174,7 @@ function App() {
               .get(matchingPatterns[i][j][k])
               .set(
                 mapKey,
-                occurences.get(matchingPatterns[i][j][k]).get(mapKey) + 1
+                occurences.get(matchingPatterns[i][j][k]).get(mapKey) + 1,
               );
           }
         }
@@ -188,13 +188,13 @@ function App() {
     for (let i = 0; i < occurenceEntires.length; i++) {
       const sign = occurenceEntires[i][0];
       const signOccurenceList = [...occurenceEntires[i][1]].sort(
-        (a, b) => b[1] - a[1]
+        (a, b) => b[1] - a[1],
       );
 
       foundTops = foundTops.concat(
         signOccurenceList
           .filter((value) => value[1] === signOccurenceList[0][1])
-          .map((value) => ({ type: sign, value: value[0] }))
+          .map((value) => ({ type: sign, value: value[0] })),
       );
     }
 
@@ -215,7 +215,7 @@ function App() {
             y,
             type: top.type,
           };
-        })
+        }),
     );
   }
 
@@ -282,7 +282,7 @@ function App() {
                     <div
                       class={(() => {
                         const matchingHighlights = highlights().filter(
-                          (h) => h.x == x() && h.y == y()
+                          (h) => h.x == x() && h.y == y(),
                         );
 
                         if (matchingHighlights.length == 0)
