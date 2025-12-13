@@ -137,7 +137,6 @@ function App() {
               updateCellContent(i, j, 4);
           }
         }
-        return;
       }
     }
 
